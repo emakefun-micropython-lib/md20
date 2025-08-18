@@ -1,7 +1,9 @@
 import struct
 from micropython import const
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
+
+DEFAULT_I2C_ADDRESS: int = const(0x16)
 
 MOTOR_NUM: int = const(4)
 
@@ -29,7 +31,6 @@ _CMD_RUN_PWM_DUTY: int = const(12)
 _CMD_RUN_SPEED: int = const(13)
 _CMD_MOVE_TO: int = const(14)
 _CMD_MOVE: int = const(15)
-
 
 _MEM_ADDR_DEVICE_ID: int = const(0x00)
 _MEM_ADDR_MAJOR_VERSION: int = const(0x01)
@@ -224,7 +225,7 @@ class Md20:
         def pwm_duty(self):
             return struct.unpack("<h", self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_PWM_DUTY + self._index * _MOTOR_STATE_OFFSET, 2))[0]
 
-    def __init__(self, i2c, i2c_address=0x16):
+    def __init__(self, i2c, i2c_address=DEFAULT_I2C_ADDRESS):
         self._i2c = i2c
         self._i2c_address = i2c_address
         self._motors = []
@@ -246,4 +247,3 @@ class Md20:
     @property
     def name(self):
         return self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_NAME, 8).decode("utf-8")
-
