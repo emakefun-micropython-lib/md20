@@ -196,9 +196,9 @@ class Md20:
             self._i2c.writeto_mem(self._i2c_address, _MEM_ADDR_COMMAND_TYPE, struct.pack("<BBii", _CMD_MOVE_TO, self._index, position, speed))
             self._execute_command()
 
-        def move(self, position, speed):
+        def move(self, offset, speed):
             self._wait_command_emptied()
-            self._i2c.writeto_mem(self._i2c_address, _MEM_ADDR_COMMAND_TYPE, struct.pack("<BBii", _CMD_MOVE, self._index, position, speed))
+            self._i2c.writeto_mem(self._i2c_address, _MEM_ADDR_COMMAND_TYPE, struct.pack("<BBii", _CMD_MOVE, self._index, offset, speed))
             self._execute_command()
 
         @property
@@ -229,7 +229,7 @@ class Md20:
         self._i2c = i2c
         self._i2c_address = i2c_address
         self._motors = []
-        for i in range(4):
+        for i in range(MOTOR_NUM):
             self._motors.append(Md20.Motor(i, i2c, i2c_address))
 
     def __getitem__(self, index):
