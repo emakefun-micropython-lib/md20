@@ -1,7 +1,7 @@
 import machine
 import md20
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 print(f"example version: {__version__}")
 print(f"md20 lib version: {md20.__version__}")

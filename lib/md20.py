@@ -1,7 +1,7 @@
 import struct
 from micropython import const
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 DEFAULT_I2C_ADDRESS: int = const(0x16)
 
@@ -203,27 +203,33 @@ class Md20:
 
         @property
         def state(self):
-            return self._i2c.readfrom_mem(
-                self._i2c_address,
-                _MEM_ADDR_STATE + self._index * _MOTOR_STATE_OFFSET,
-                1,
-            )[0]
+            mem_addr = _MEM_ADDR_STATE + self._index * _MOTOR_STATE_OFFSET
+            self._i2c.writeto_mem(self._i2c_address, mem_addr, b"\x00")
+            return self._i2c.readfrom_mem(self._i2c_address, mem_addr, 1)[0]
 
         @property
         def speed(self):
-            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_SPEED + self._index * _MOTOR_STATE_OFFSET, 4))[0]
+            mem_addr = _MEM_ADDR_SPEED + self._index * _MOTOR_STATE_OFFSET
+            self._i2c.writeto_mem(self._i2c_address, mem_addr, b"\x00")
+            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, mem_addr, 4))[0]
 
         @property
         def position(self):
-            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_POSITION + self._index * _MOTOR_STATE_OFFSET, 4))[0]
+            mem_addr = _MEM_ADDR_POSITION + self._index * _MOTOR_STATE_OFFSET
+            self._i2c.writeto_mem(self._i2c_address, mem_addr, b"\x00")
+            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, mem_addr, 4))[0]
 
         @property
         def pulse_count(self):
-            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_PULSE_COUNT + self._index * _MOTOR_STATE_OFFSET, 4))[0]
+            mem_addr = _MEM_ADDR_PULSE_COUNT + self._index * _MOTOR_STATE_OFFSET
+            self._i2c.writeto_mem(self._i2c_address, mem_addr, b"\x00")
+            return struct.unpack("<i", self._i2c.readfrom_mem(self._i2c_address, mem_addr, 4))[0]
 
         @property
         def pwm_duty(self):
-            return struct.unpack("<h", self._i2c.readfrom_mem(self._i2c_address, _MEM_ADDR_PWM_DUTY + self._index * _MOTOR_STATE_OFFSET, 2))[0]
+            mem_addr = _MEM_ADDR_PWM_DUTY + self._index * _MOTOR_STATE_OFFSET
+            self._i2c.writeto_mem(self._i2c_address, mem_addr, b"\x00")
+            return struct.unpack("<h", self._i2c.readfrom_mem(self._i2c_address, mem_addr, 2))[0]
 
     def __init__(self, i2c, i2c_address=DEFAULT_I2C_ADDRESS):
         self._i2c = i2c
